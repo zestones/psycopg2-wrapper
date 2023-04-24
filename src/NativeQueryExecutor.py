@@ -1,17 +1,17 @@
-from src.DatabaseConnection import DatabaseConnection
+from src.DatabaseConnector import DatabaseConnector
 
-class QueryExecution:
+class NativeQueryExecutor:
     """
     This class is responsible for executing SQL queries. 
-    It takes an instance of DatabaseConnection to establish a database connection.
+    It takes an instance of DatabaseConnector to establish a database connection.
     """
 
-    def __init__(self, db_conn: DatabaseConnection) -> None:
+    def __init__(self, db_conn: DatabaseConnector) -> None:
         """
-        Constructor that takes an instance of DatabaseConnection to establish a database connection.
+        Constructor that takes an instance of DatabaseConnector to establish a database connection.
 
         Parameters:
-        db_conn (DatabaseConnection): An instance of DatabaseConnection.
+        db_conn (DatabaseConnector): An instance of DatabaseConnector.
         """
         self.conn = db_conn
 
