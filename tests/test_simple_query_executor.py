@@ -6,14 +6,14 @@ import pytest
 
 @pytest.fixture
 def db_conn():
-    params = {"database": "test_db", "user": "postgres", "password": "postgres", "host": "localhost"}
+    params = {"database": "test_db", "user": "postgres", "password": "Lenine42", "host": "localhost"}
     return DatabaseConnector(db_params=params)
 
 
 def test_create_table(db_conn):
     sqe = SimpleQueryExecutor(db_conn)
     sqe.create_table(
-        "test_table", ["id SERIAL PRIMARY KEY", "name VARCHAR(50)", "age INTEGER"])
+        "test_table", {"id": "SERIAL PRIMARY KEY", "name": "VARCHAR(50)", "age": "INTEGER"})
     cursor, conn = sqe.execute_and_fetchall(
         "SELECT * FROM information_schema.tables WHERE table_name='test_table';")
     result = cursor.fetchall()
@@ -22,10 +22,11 @@ def test_create_table(db_conn):
     sqe.execute_and_commit("DROP TABLE test_table;")
 
 
+
 def test_insert_data(db_conn):
     sqe = SimpleQueryExecutor(db_conn)
     sqe.create_table(
-        "test_table", ["id SERIAL PRIMARY KEY", "name VARCHAR(50)", "age INTEGER"])
+        "test_table", {"id": "SERIAL PRIMARY KEY", "name": "VARCHAR(50)", "age": "INTEGER"})
     sqe.insert_data("test_table", ["name", "age"], [
                     ("John", 35), ("Jane", 25)])
     cursor, conn = sqe.execute_and_fetchall(
@@ -42,7 +43,7 @@ def test_insert_data(db_conn):
 def test_select_data(db_conn):
     sqe = SimpleQueryExecutor(db_conn)
     sqe.create_table(
-        "test_table", ["id SERIAL PRIMARY KEY", "name VARCHAR(50)", "age INTEGER"])
+        "test_table", [{"id": "SERIAL PRIMARY KEY", "name": "VARCHAR(50)", "age": "INTEGER"}])
     sqe.insert_data("test_table", ["name", "age"], [
                     ("John", 35), ("Jane", 25)])
     result = sqe.select_data("test_table", ["name", "age"], "age > 30")
@@ -55,7 +56,7 @@ def test_select_data(db_conn):
 def test_alter_table(db_conn):
     sqe = SimpleQueryExecutor(db_conn)
     sqe.create_table(
-        "test_table", ["id SERIAL PRIMARY KEY", "name VARCHAR(50)", "age INTEGER"])
+        "test_table", [{"id": "SERIAL PRIMARY KEY", "name": "VARCHAR(50)", "age": "INTEGER"}])
     sqe.alter_table("test_table", "ADD COLUMN gender CHAR(1)")
     cursor, conn = sqe.execute_and_fetchall(
         "SELECT column_name FROM information_schema.columns WHERE table_name='test_table' ORDER BY column_name;")
@@ -71,7 +72,7 @@ def test_alter_table(db_conn):
 def test_drop_table(db_conn):
     sqe = SimpleQueryExecutor(db_conn)
     sqe.create_table(
-        "test_table", ["id SERIAL PRIMARY KEY", "name VARCHAR(50)", "age INTEGER"])
+        "test_table", [{"id": "SERIAL PRIMARY KEY", "name": "VARCHAR(50)", "age": "INTEGER"}])
     sqe.drop_table("test_table")
     cursor, conn = sqe.execute_and_fetchall(
         "SELECT * FROM information_schema.tables WHERE table_name='test_table';")
