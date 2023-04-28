@@ -28,7 +28,7 @@ class SimpleQueryExecutor(NativeQueryExecutor):
         self.execute_and_commit(sql)
 
 
-    def select_data(self, table_name: str, columns: list = None, where_clause: str = None) -> list:
+    def select_data(self, table_name: str, columns: list = None, where: str = None) -> list:
         """
         Select data from a table in the database.
 
@@ -36,7 +36,7 @@ class SimpleQueryExecutor(NativeQueryExecutor):
         ----------
         - table_name: The name of the table to select from.
         - columns: A list of column names to select.
-        - where_clause: A WHERE clause to filter the results.
+        - where: A WHERE clause to filter the results.
 
         Returns:
         -------
@@ -45,8 +45,8 @@ class SimpleQueryExecutor(NativeQueryExecutor):
         col_names = '*' if columns is None else ','.join(columns)
         sql = f"SELECT {col_names} FROM {table_name}"
         
-        if where_clause is not None:
-            sql += f" WHERE {where_clause}"
+        if where is not None:
+            sql += f" WHERE {where}"
         
         return self.execute_and_fetchall(sql)
     
