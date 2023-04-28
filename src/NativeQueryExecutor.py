@@ -15,6 +15,7 @@ class NativeQueryExecutor:
         """
         self.conn = db_conn
 
+
     def execute(self, sql: str, params: tuple = None) -> tuple:
         """
         Execute a SQL query.

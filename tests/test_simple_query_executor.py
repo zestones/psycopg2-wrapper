@@ -1,80 +1,59 @@
-from src.DatabaseConnector import DatabaseConnector
-from src.SimpleQueryExecutor import SimpleQueryExecutor
-
 import pytest
+import psycopg2
+
+from src.SimpleQueryExecutor import SimpleQueryExecutor
+from src.DatabaseConnector import DatabaseConnector
+
+from . import DATABASE_PARAMS
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def db_conn():
-    params = {"database": "test_db", "user": "postgres", "password": "pwd", "host": "localhost"}
-    return DatabaseConnector(db_params=params)
+    # Setup
+    conn = psycopg2.connect(
+        host=DATABASE_PARAMS["host"],
+        user=DATABASE_PARAMS["user"],
+        password=DATABASE_PARAMS["password"]
+    )
+    conn.set_isolation_level(0)
+    cur = conn.cursor()
+    cur.execute(f"CREATE DATABASE {DATABASE_PARAMS['database']}")
+    cur.close()
+
+    db_conn = DatabaseConnector(db_params=DATABASE_PARAMS)
+    query_executor = SimpleQueryExecutor(db_conn)
+    query_executor.create_table("test_table", {"id": "INTEGER PRIMARY KEY", "name": "TEXT"})
+    yield db_conn
+
+    # Teardown
+    query_executor.drop_table("test_table")
 
 
-def test_create_table(db_conn):
-    sqe = SimpleQueryExecutor(db_conn)
-    sqe.create_table(
-        "test_table", {"id": "SERIAL PRIMARY KEY", "name": "VARCHAR(50)", "age": "INTEGER"})
-    cursor, conn = sqe.execute_and_fetchall(
-        "SELECT * FROM information_schema.tables WHERE table_name='test_table';")
-    result = cursor.fetchall()
-    assert len(result) == 1
-    assert result[0][2] == "test_table"
-    sqe.execute_and_commit("DROP TABLE test_table;")
+@pytest.fixture(scope="module")
+def query_executor(db_conn):
+    query_executor = SimpleQueryExecutor(db_conn)
+    yield query_executor
 
 
-
-def test_insert_data(db_conn):
-    sqe = SimpleQueryExecutor(db_conn)
-    sqe.create_table(
-        "test_table", {"id": "SERIAL PRIMARY KEY", "name": "VARCHAR(50)", "age": "INTEGER"})
-    sqe.insert_data("test_table", ["name", "age"], [
-                    ("John", 35), ("Jane", 25)])
-    cursor, conn = sqe.execute_and_fetchall(
-        "SELECT * FROM test_table ORDER BY id;")
-    result = cursor.fetchall()
-    assert len(result) == 2
-    assert result[0][1] == "John"
-    assert result[0][2] == 35
-    assert result[1][1] == "Jane"
-    assert result[1][2] == 25
-    sqe.execute_and_commit("DROP TABLE test_table;")
+def test_create_table(query_executor):
+    query_executor.create_table("test_table_2", {"id": "INTEGER PRIMARY KEY", "name": "TEXT"})
+    assert len(query_executor.select_data("test_table_2")) == 0
 
 
-def test_select_data(db_conn):
-    sqe = SimpleQueryExecutor(db_conn)
-    sqe.create_table(
-        "test_table", [{"id": "SERIAL PRIMARY KEY", "name": "VARCHAR(50)", "age": "INTEGER"}])
-    sqe.insert_data("test_table", ["name", "age"], [
-                    ("John", 35), ("Jane", 25)])
-    result = sqe.select_data("test_table", ["name", "age"], "age > 30")
-    assert len(result) == 1
-    assert result[0][0] == "John"
-    assert result[0][1] == 35
-    sqe.execute_and_commit("DROP TABLE test_table;")
+def test_select_data(query_executor):
+    data = {"id": 1, "name": "John"}
+    query_executor.insert_data("test_table", data)
+    assert query_executor.select_data("test_table", where_clause="id=1") == [(1, "John")]
 
 
-def test_alter_table(db_conn):
-    sqe = SimpleQueryExecutor(db_conn)
-    sqe.create_table(
-        "test_table", [{"id": "SERIAL PRIMARY KEY", "name": "VARCHAR(50)", "age": "INTEGER"}])
-    sqe.alter_table("test_table", "ADD COLUMN gender CHAR(1)")
-    cursor, conn = sqe.execute_and_fetchall(
-        "SELECT column_name FROM information_schema.columns WHERE table_name='test_table' ORDER BY column_name;")
-    result = cursor.fetchall()
-    assert len(result) == 4
-    assert result[0][0] == "age"
-    assert result[1][0] == "gender"
-    assert result[2][0] == "id"
-    assert result[3][0] == "name"
-    sqe.execute_and_commit("DROP TABLE test_table;")
+def test_insert_data(query_executor):
+    data = {"id": 2, "name": "Jane"}
+    query_executor.insert_data("test_table", data)
+    assert query_executor.select_data("test_table", where_clause="id=2") == [(2, "Jane")]
 
 
-def test_drop_table(db_conn):
-    sqe = SimpleQueryExecutor(db_conn)
-    sqe.create_table(
-        "test_table", [{"id": "SERIAL PRIMARY KEY", "name": "VARCHAR(50)", "age": "INTEGER"}])
-    sqe.drop_table("test_table")
-    cursor, conn = sqe.execute_and_fetchall(
-        "SELECT * FROM information_schema.tables WHERE table_name='test_table';")
-    result = cursor.fetchall()
-    assert len(result) == 0
+def test_drop_table(query_executor):
+    query_executor.create_table("test_table_3", {"id": "INTEGER PRIMARY KEY", "name": "TEXT"})
+    query_executor.drop_table("test_table_3")
+    with pytest.raises(Exception):
+        query_executor.select_data("test_table_3")

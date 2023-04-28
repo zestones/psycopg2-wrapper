@@ -4,28 +4,24 @@ from src.DatabaseConnector import DatabaseConnector
 import pytest
 import psycopg2
 
+from . import DATABASE_PARAMS
 
 @pytest.fixture(scope="session")
 def db_params():
     # create a test database and return the database parameters
-    test_db_name = "test_db"
+
     conn = psycopg2.connect(
-        host="localhost",
-        user="postgres",
-        password="pwd"
+        host=DATABASE_PARAMS["host"],
+        user=DATABASE_PARAMS["user"],
+        password=DATABASE_PARAMS["password"]
     )
     
     conn.set_isolation_level(0)
     cur = conn.cursor()
-    cur.execute(f"CREATE DATABASE {test_db_name}")
+    cur.execute(f"CREATE DATABASE {DATABASE_PARAMS['database']}")
     conn.close()
     
-    return {
-        "host": "localhost",
-        "database": test_db_name,
-        "user": "postgres",
-        "password": "pwd"
-    }
+    return DATABASE_PARAMS
 
 
 @pytest.fixture(scope="session")
@@ -95,14 +91,14 @@ def drop_test_db(request):
     def finalizer():
 
         conn = psycopg2.connect(
-            host="localhost",
-            user="postgres",
-            password="pwd"
+            host=DATABASE_PARAMS["host"],
+            user=DATABASE_PARAMS["user"],
+            password=DATABASE_PARAMS["password"]
         )
 
         conn.set_isolation_level(0)
         cur = conn.cursor()
-        cur.execute("DROP DATABASE test_db")
+        cur.execute(f"DROP DATABASE IF EXISTS {DATABASE_PARAMS['database']}")
         conn.close()
 
     request.addfinalizer(finalizer)
