@@ -57,3 +57,22 @@ def test_drop_table(query_executor):
     query_executor.drop_table("test_table_3")
     with pytest.raises(Exception):
         query_executor.select_data("test_table_3")
+        
+
+@pytest.fixture(scope="session", autouse=True)
+def drop_test_db(request):
+    # drop the test database after all tests are finished
+    def finalizer():
+
+        conn = psycopg2.connect(
+            host=DATABASE_PARAMS["host"],
+            user=DATABASE_PARAMS["user"],
+            password=DATABASE_PARAMS["password"]
+        )
+
+        conn.set_isolation_level(0)
+        cur = conn.cursor()
+        cur.execute(f"DROP DATABASE IF EXISTS {DATABASE_PARAMS['database']}")
+        conn.close()
+
+    request.addfinalizer(finalizer)
