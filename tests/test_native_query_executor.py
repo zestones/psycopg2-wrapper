@@ -9,7 +9,6 @@ from . import DATABASE_PARAMS
 @pytest.fixture(scope="session")
 def db_params():
     # create a test database and return the database parameters
-
     conn = psycopg2.connect(
         host=DATABASE_PARAMS["host"],
         user=DATABASE_PARAMS["user"],
@@ -24,16 +23,10 @@ def db_params():
     return DATABASE_PARAMS
 
 
-@pytest.fixture(scope="session")
-def db_conn(db_params):
-    # create a DatabaseConnector instance for the test database
-    return DatabaseConnector(db_params)
-
-
 @pytest.fixture(scope="function")
-def query_execution(db_conn):
+def query_execution(db_params):
     # create a NativeQueryExecutor instance for the test database
-    return NativeQueryExecutor(db_conn)
+    return NativeQueryExecutor(db_params)
 
 
 def test_execute_and_commit(query_execution):

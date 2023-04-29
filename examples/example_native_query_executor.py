@@ -5,7 +5,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 
 from src.NativeQueryExecutor import NativeQueryExecutor
-from src.DatabaseConnector import DatabaseConnector
 
 # database parameters 
 DATABASE_PARAMS = {
@@ -16,11 +15,9 @@ DATABASE_PARAMS = {
     "database": "mydatabase" # create a database named "mydatabase" before running this script
 }
 
-# create a DatabaseConnector instance
-db_conn = DatabaseConnector(DATABASE_PARAMS)
 
 # create a NativeQueryExecutor instance
-query_executor = NativeQueryExecutor(db_conn)
+query_executor = NativeQueryExecutor(config=DATABASE_PARAMS)
 
 # create a table in the database
 create_table_query = """

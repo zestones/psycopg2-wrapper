@@ -8,11 +8,11 @@ class SimpleQueryExecutor(NativeQueryExecutor):
     It extends the NativeQueryExecutor class to execute simple SQL queries.
     """
     
-    def __init__(self, db_conn: DatabaseConnector) -> None:
+    def __init__(self, config: dict) -> None:
         """
         Constructor that stores the DatabaseConnector instance.
         """
-        super().__init__(db_conn)
+        super().__init__(config)
 
 
     def create_table(self, table_name: str, columns: dict) -> None:
