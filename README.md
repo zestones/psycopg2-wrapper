@@ -1,14 +1,9 @@
 # Psycopg2-Wrapper
+[![Upload Python Package](https://github.com/zestones/psycopg2-wrapper/actions/workflows/PyPi-deploy.yml/badge.svg)](https://github.com/zestones/psycopg2-wrapper/actions/workflows/PyPi-deploy.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Realease](https://img.shields.io/github/v/release/zestones/psycopg2-wrapper)](https://img.shields.io/github/v/release/zestones/psycopg2-wrapper)
 
 Psycopg2-Wrapper is a Python library that provides a simple and easy-to-use interface for executing SQL queries using Psycopg2. It is designed to make it easy for developers to interact with PostgreSQL databases from Python applications.
-
-
-<!-- Add badges to showcase important information -->
-<p align="left">
-    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/zestones/psycopg2-wrapper/CI">
-    <img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/zestones/psycopg2-wrapper">
-    <img alt="GitHub license" src="https://img.shields.io/github/license/zestones/psycopg2-wrapper">
-</p>
 
 
 ## Features
