@@ -58,6 +58,8 @@ config = {
 Check out the [Psycopg2 documentation](https://www.psycopg.org/docs/module.html) for more information about the configuration options.
 </details>
 
+---
+
 <details>
 <summary style="font-weight: bold; font-size: 1.2em;"> NativeQueryExecutor </summary>
 
@@ -124,7 +126,13 @@ param = (1,)
 result = query_executor.execute_and_fetchall(query_data_query)
 ```
 The `execute_and_fetchall` method takes two parameters: the **SQL query** to execute, and **an optional tuple of parameters** to pass to the query.
+
+---
+
 </details>
+
+
+
 <details>
 <summary style="font-weight: bold; font-size: 1em;">Write/modify data to the database</summary>
 
@@ -153,6 +161,8 @@ The `execute_many_and_commit` method takes two parameters: the **SQL query** to 
 Check out the [NativeQueryExecutor example](./examples/example_native_query_executor.py) for more examples of how to use the `NativeQueryExecutor` class.
 </details>
 </details>
+
+---
 
 <details>
 <summary style="font-weight: bold; font-size: 1.2em;">SimpleQueryExecutor</summary>
@@ -233,4 +243,4 @@ query_executor.drop_table('my_table')
 The `drop_table` method takes one parameter: **the name of the table** to drop.
 
 For more examples of how to use the `SimpleQueryExecutor` class, check out the [SimpleQueryExecutor example](./examples/example_simple_query_executor.py).
-<details>
+</details>
