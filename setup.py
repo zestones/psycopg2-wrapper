@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
     install_requires = f.read().splitlines()
 
 setup(
-    name='psycopg2-wrapper',
+    name='psycopg2-wrappers',
     version='1.0.0',  # current_version
     description='psycopg2-wrapper is a wrapper for psycopg2 that makes it easier to use.',
     author='zestones',
