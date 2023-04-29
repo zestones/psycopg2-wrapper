@@ -1,5 +1,5 @@
-from src.NativeQueryExecutor import NativeQueryExecutor
-from src.DatabaseConnector import DatabaseConnector
+from psycopg2_wrapper.NativeQueryExecutor import NativeQueryExecutor
+from psycopg2_wrapper.DatabaseConnector import DatabaseConnector
 
 import pytest
 import psycopg2

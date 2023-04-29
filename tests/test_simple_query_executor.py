@@ -1,8 +1,8 @@
 import pytest
 import psycopg2
 
-from src.SimpleQueryExecutor import SimpleQueryExecutor
-from src.DatabaseConnector import DatabaseConnector
+from psycopg2_wrapper.SimpleQueryExecutor import SimpleQueryExecutor
+from psycopg2_wrapper.DatabaseConnector import DatabaseConnector
 
 from . import DATABASE_PARAMS
 

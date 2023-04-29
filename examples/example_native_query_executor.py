@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 
-from src.NativeQueryExecutor import NativeQueryExecutor
+from psycopg2_wrapper.NativeQueryExecutor import NativeQueryExecutor
 
 # database parameters 
 DATABASE_PARAMS = {

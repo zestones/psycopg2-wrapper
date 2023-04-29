@@ -3,7 +3,7 @@ import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from src.SimpleQueryExecutor import SimpleQueryExecutor
+from psycopg2_wrapper.SimpleQueryExecutor import SimpleQueryExecutor
 
 # database parameters 
 DATABASE_PARAMS = {

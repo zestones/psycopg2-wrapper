@@ -1,4 +1,4 @@
-from src.DatabaseConnector import DatabaseConnector
+from psycopg2_wrapper.DatabaseConnector import DatabaseConnector
 
 class NativeQueryExecutor:
     """
