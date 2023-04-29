@@ -6,14 +6,14 @@ class NativeQueryExecutor:
     It takes an instance of DatabaseConnector to establish a database connection.
     """
 
-    def __init__(self, db_conn: DatabaseConnector) -> None:
+    def __init__(self, config: dict) -> None:
         """
         Constructor that takes an instance of DatabaseConnector to establish a database connection.
 
         Parameters:
         db_conn (DatabaseConnector): An instance of DatabaseConnector.
         """
-        self.conn = db_conn
+        self.conn = DatabaseConnector(db_params=config)
 
 
     def execute(self, sql: str, params: tuple = None) -> tuple:
