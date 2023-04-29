@@ -50,10 +50,10 @@ from psycopg2_wrapper import SimpleQueryExecutor, NativeQueryExecutor
 
 Before you can execute SQL queries using Psycopg2-Wrapper, you need to configure the connection to the PostgreSQL server. You can do this by creating a configuration dictionary with the following fields:
 
-```json
+```python
 config = {
     "host": "localhost",
-    "port": "5432", // if not specified, default port 5432 will be used
+    "port": "5432", # if not specified, default port 5432 will be used
     "database": "mydatabase",
     "user": "myusername",
     "password": "mypassword"
