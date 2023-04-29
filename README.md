@@ -1,9 +1,7 @@
-Great, here's the updated readme with the additional usage information:
-
 # Psycopg2-Wrapper
 
 Psycopg2-Wrapper is a Python library that provides a simple and easy-to-use interface for executing SQL queries using Psycopg2. It is designed to make it easy for developers to interact with PostgreSQL databases from Python applications.
----
+
 ## Table of Contents
 - [Features](#features)
 - [Installation](#installation)
@@ -21,6 +19,8 @@ Psycopg2-Wrapper is a Python library that provides a simple and easy-to-use inte
     - [Creating a table](#creating-a-table)
     - [Inserting data into a table](#inserting-data-into-a-table)
     - [Dropping a table](#dropping-a-table)
+
+---
 
 ## Features
 
