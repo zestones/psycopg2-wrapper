@@ -27,7 +27,9 @@ pip install psycopg2-wrapper
 To use Psycopg2-Wrapper in your Python application, you first need to import one of the query executor classes from the `psycopg2_wrapper` module:
 
 ```python
-from psycopg2_wrapper import SimpleQueryExecutor, NativeQueryExecutor
+from psycopg2_wrapper.SimpleQueryExecutor import SimpleQueryExecutor
+# or
+from psycopg2_wrapper.NativeQueryExecutor import NativeQueryExecutor
 ```
 <details>
 <summary style="font-weight: bold; font-size: 1.2em;">Configuration</summary>
