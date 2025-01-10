@@ -1,73 +1,90 @@
-import pytest
-import psycopg2
+# test_simple_query_executor.py
 
+import pytest
 from psycopg2_wrapper.SimpleQueryExecutor import SimpleQueryExecutor
-from psycopg2_wrapper.DatabaseConnector import DatabaseConnector
 
 from . import DATABASE_PARAMS
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def db_params():
-    # create a test database and return the database parameters
-    conn = psycopg2.connect(
-        host=DATABASE_PARAMS["host"],
-        user=DATABASE_PARAMS["user"],
-        password=DATABASE_PARAMS["password"]
-    )
-    
-    conn.set_isolation_level(0)
-    cur = conn.cursor()
-    cur.execute(f"CREATE DATABASE {DATABASE_PARAMS['database']}")
-    conn.close()
-    
+    """
+    Fixture to provide database parameters for tests.
+    Returns:
+        dict: A dictionary containing the database connection parameters.
+    """
     return DATABASE_PARAMS
 
+@pytest.fixture
+def simple_query_executor(db_params):
+    """
+    Fixture to create an instance of SimpleQueryExecutor for testing.
+    
+    Args:
+        db_params (dict): Database connection parameters.
 
-@pytest.fixture(scope="function")
-def query_executor(db_params):
-    query_executor = SimpleQueryExecutor(config=db_params)
-    yield query_executor
+    Returns:
+        SimpleQueryExecutor: An instance of the query executor for simple operations.
+    """
+    return SimpleQueryExecutor(db_params)
 
+def test_create_table(simple_query_executor):
+    """
+    Test creating a table.
+    Ensures that the `create_table` method creates a table with the specified schema.
 
-def test_create_table(query_executor):
-    query_executor.create_table("test_table", {"id": "INTEGER PRIMARY KEY", "name": "TEXT"})
-    assert len(query_executor.select_data("test_table")) == 0
+    Args:
+        simple_query_executor (SimpleQueryExecutor): Fixture for executing simple queries.
+    """
+    simple_query_executor.create_table('test_table', {'id': 'SERIAL PRIMARY KEY', 'name': 'VARCHAR(100)'})
 
+    result = simple_query_executor.execute_and_fetchone("SELECT to_regclass('public.test_table')")
+    assert result[0] == 'test_table'
 
-def test_select_data(query_executor):
-    data = {"id": 1, "name": "John"}
-    query_executor.insert_data("test_table", data)
-    assert query_executor.select_data("test_table", where="id=1") == [(1, "John")]
+    simple_query_executor.drop_table('test_table')
 
+def test_insert_data(simple_query_executor):
+    """
+    Test inserting data into a table.
+    Ensures that the `insert_data` method correctly inserts rows into the specified table.
 
-def test_insert_data(query_executor):
-    data = {"id": 2, "name": "Jane"}
-    query_executor.insert_data("test_table", data)
-    assert query_executor.select_data("test_table", where="id=2") == [(2, "Jane")]
+    Args:
+        simple_query_executor (SimpleQueryExecutor): Fixture for executing simple queries.
+    """
+    simple_query_executor.create_table('test_table', {'id': 'SERIAL PRIMARY KEY', 'name': 'VARCHAR(100)'})
+    simple_query_executor.insert_data('test_table', {'name': 'Test'})
+    
+    result = simple_query_executor.select_data('test_table', ['name'])
+    assert result == [('Test',)]
+    
+    simple_query_executor.drop_table('test_table')
 
+def test_select_data(simple_query_executor):
+    """
+    Test selecting data from a table.
+    Ensures that the `select_data` method retrieves the expected rows from the table.
 
-def test_drop_table(query_executor):
-    query_executor.create_table("test_table_2", {"id": "INTEGER PRIMARY KEY", "name": "TEXT"})
-    query_executor.drop_table("test_table_2")
-    with pytest.raises(Exception):
-        query_executor.select_data("test_table_2")
-        
+    Args:
+        simple_query_executor (SimpleQueryExecutor): Fixture for executing simple queries.
+    """
+    simple_query_executor.create_table('test_table', {'id': 'SERIAL PRIMARY KEY', 'name': 'VARCHAR(100)'})
+    simple_query_executor.insert_data('test_table', {'name': 'Test'})
+    
+    result = simple_query_executor.select_data('test_table', ['name'])
+    assert result == [('Test',)]
+    
+    simple_query_executor.drop_table('test_table')
 
-@pytest.fixture(scope="session", autouse=True)
-def drop_test_db(request):
-    # drop the test database after all tests are finished
-    def finalizer():
+def test_drop_table(simple_query_executor):
+    """
+    Test dropping a table.
+    Ensures that the `drop_table` method removes the table from the database.
 
-        conn = psycopg2.connect(
-            host=DATABASE_PARAMS["host"],
-            user=DATABASE_PARAMS["user"],
-            password=DATABASE_PARAMS["password"]
-        )
-
-        conn.set_isolation_level(0)
-        cur = conn.cursor()
-        cur.execute(f"DROP DATABASE IF EXISTS {DATABASE_PARAMS['database']}")
-        conn.close()
-
-    request.addfinalizer(finalizer)
+    Args:
+        simple_query_executor (SimpleQueryExecutor): Fixture for executing simple queries.
+    """
+    simple_query_executor.create_table('test_table', {'id': 'SERIAL PRIMARY KEY', 'name': 'VARCHAR(100)'})
+    simple_query_executor.drop_table('test_table')
+    
+    result = simple_query_executor.execute_and_fetchone("SELECT to_regclass('public.test_table')")
+    assert result[0] is None
